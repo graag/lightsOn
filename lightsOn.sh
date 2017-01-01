@@ -43,7 +43,7 @@
 # DEBUG=0 for no output
 # DEBUG=1 for sleep prints
 # DEBUG=2 for everything
-DEBUG=2
+DEBUG=0
 
 # this is actually the minimum allowed dynamic delay.
 # Also the default (if everything else fails)
