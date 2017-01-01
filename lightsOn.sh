@@ -94,6 +94,11 @@ DPMS_OffTime=600
 X11ScreenSaver_Control=1
 X11ScreenSaver_Timeout=600
 
+# xfce4-power-manager control
+# If you don't want to change these settings, modify xfce4powermanager_control to 0.
+xfce4powermanager_control=1
+
+
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW THIS LINE
 gsettings_present=$(if [ -x $(which gsettings) ]; then echo 1; else echo 0; fi)
 xdg_screensaver_present=$(if [ -x $(which xdg-screensaver) ]; then echo 1; else echo 0; fi)
@@ -158,6 +163,15 @@ else
     log "No screensaver detected"
 fi
 
+# Set xfce4-power-manager presentation mode off or on
+# first param is true or false
+setPresentationMode()
+{
+	if [$xfce4powermanager_control == 1]; then
+		xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/presentation-mode -s $1
+	fi	
+}
+
 checkDelayProgs()
 {
     log "checkDelayProgs()"
@@ -165,8 +179,12 @@ checkDelayProgs()
         if [ $(pgrep -lfc "$prog") -ge 1 ]; then
             log "checkDelayProgs(): Delaying the screensaver because a program on the delay list, \"$prog\", is running..."
             delayScreensaver
-            break
-        fi
+	        break
+        else
+			# Disable presentation mode
+			setPresentationMode false
+		fi
+		
     done
 }
 
@@ -204,6 +222,8 @@ checkFullscreen()
                 log "checkFullscreen(): the fullscreen app is unknown or not set to trigger the delay"
             else
                 log "checkFullscreen(): NO fullscreen detected"
+				# Disable presentation mode
+				setPresentationMode false
             fi
             # enable DPMS if necessary.
             dpmsStatus=$(xset -q | grep -c 'DPMS is Enabled')
@@ -449,6 +469,9 @@ delayScreensaver()
             gsettings set org.mate.session idle-delay $sessionIdleDelay 2>/dev/null
         fi
     fi
+	# Set xfce4-power-manager into presentation mode
+	# Enable presentation mode
+	setPresentationMode true	
 }
 
 checkOutputs()

@@ -4,4 +4,6 @@ Also, screensaver can be prevented when certain specified programs are running.
 This script can be used to control X11 Screen Saver Extension and DPMS settings, read the source.
 Optionally can delay the screensaver when specific outputs are connected.
 
+Add setting xfce4-power-manager into presentation mode
+
 License: GNU GPL version 2.0 or above
