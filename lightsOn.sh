@@ -168,6 +168,7 @@ fi
 setPresentationMode()
 {
 	if [$xfce4powermanager_control == 1]; then
+		log "xfce4-power-manager set presentation mode to $1"
 		xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/presentation-mode -s $1
 	fi	
 }
