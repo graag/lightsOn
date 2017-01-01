@@ -43,7 +43,7 @@
 # DEBUG=0 for no output
 # DEBUG=1 for sleep prints
 # DEBUG=2 for everything
-DEBUG=0
+DEBUG=2
 
 # this is actually the minimum allowed dynamic delay.
 # Also the default (if everything else fails)
@@ -167,7 +167,7 @@ fi
 # first param is true or false
 setPresentationMode()
 {
-	if [$xfce4powermanager_control == 1]; then
+	if [ $xfce4powermanager_control == 1 ]; then
 		log "xfce4-power-manager set presentation mode to $1"
 		xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/presentation-mode -s $1
 	fi	
