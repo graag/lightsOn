@@ -158,6 +158,9 @@ elif pgrep -x mate-screensave > /dev/null; then
 elif pgrep -x cinnamon-screen > /dev/null; then
     screensaver=cinnamon-screensaver
     log "cinnamon-screensaver detected"
+elif qdbus org.freedesktop.ScreenSaver /ScreenSaver org.freedesktop.DBus.Peer.Ping > /dev/null; then
+    screensaver=qdbus-compatible-screensaver
+    log "qdbus-compatible-screensaver detected"
 else
     screensaver=None
     log "No screensaver detected"
@@ -430,6 +433,9 @@ delayScreensaver()
     elif [ "$screensaver" == "cinnamon-screensaver" ]; then
         log "delayScreensaver(): delaying cinnamon-screensaver..."
         dbus-send --session --dest=org.cinnamon.ScreenSaver --type=method_call /org/cinnamon/ScreenSaver org.cinnamon.ScreenSaver.SimulateUserActivity >/dev/null 2>&1
+    elif [ "$screensaver" == "qdbus-compatible-screensaver" ]; then
+        log "delayScreensaver(): delaying qdbus-compatible-screensaver..."
+        qdbus org.freedesktop.ScreenSaver /ScreenSaver SimulateUserActivity > /dev/null
     else
         if [ $xdg_screensaver_present == 1 ]; then
             log "delayScreensaver(): trying to delay with xdg-screensaver..."
