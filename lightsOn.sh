@@ -45,6 +45,9 @@
 # DEBUG=2 for everything
 DEBUG=0
 
+# Uncomment to disable display detection - it is broken when using several seats
+# displays=$(echo $DISPLAY | awk -F: '{print $2}')
+
 # this is actually the minimum allowed dynamic delay.
 # Also the default (if everything else fails)
 default_sleep_delay=50
@@ -72,12 +75,13 @@ yandexBrowser_html5_flash_detection=1
 epiphany_html5_detection=1
 webkit_flash_detection=1
 minitube_detection=1
+kodi_detection=1
 
 # Names of programs which, when running, you wish to delay the screensaver.
 # For example ('ardour2' 'gmpc').
 delay_progs=()
 
-# Display outputs to check, display screensaver when they are connected.
+# Display outputs to check, disable screensaver when they are connected.
 # Run xrandr to show current monitor config.
 output_detection_control=0
 output_detection=('HDMI-0')
@@ -137,7 +141,9 @@ if [ $X11ScreenSaver_Control == 1 ]; then
 fi
 
 # enumerate all the attached screens
-displays=$(xvinfo | awk -F'#' '/^screen/ {print $2}' | xargs)
+if [ -z $displays ]; then
+    displays=$(xvinfo | awk -F'#' '/^screen/ {print $2}' | xargs)
+fi
 
 # Detect screensaver being used
 if pgrep -x xscreensaver > /dev/null; then
@@ -395,6 +401,18 @@ isAppRunning()
             # Check if MPlayer is running.
             if [ "$(pidof -s mplayer)" ]; then
                 log "isAppRunning(): mplayer fullscreen detected"
+                return 1
+            fi
+        fi
+    fi
+
+    # Check if user want to detect Kodi fullscreen.
+    if [ $kodi_detection == 1 ]; then
+        if [[ "$activ_win_title" = *Kodi* ]]; then
+            # Check if Kodi is running.
+            kodi_process=$(pgrep -lfc kodi)
+            if [ $kodi_process -ge 1 ]; then
+                log "isAppRunning(): Kodi fullscreen detected"
                 return 1
             fi
         fi
